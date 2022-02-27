@@ -1,0 +1,18 @@
+.cardClass {
+    margin-left: 3px;
+    font-size: 74px;
+}
+.red {
+    color: red
+}
+.player-container {
+    font-size: 50px;
+}
+.playerDiv {
+    border: 1px solid grey;
+    display: flex;
+    flex-direction: row;
+}
+.playAreaDiv {
+    border: 1px solid grey;
+}
