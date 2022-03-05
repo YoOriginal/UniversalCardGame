@@ -1,7 +1,9 @@
 let noOfPlayers = 6;
-
+let potContainer = document.getElementsByClassName('playAreaDiv')[0];
+let playableCards = document.querySelectorAll('.player-container .cardClass');
 let playerContainerDiv = document.getElementsByClassName('player-container')[0];
-
+let initialCardDistribution = 4;
+let cardsDiscardedAtStart = false;
 function makePlayerDiv(playerId) {
     let playerDiv = document.createElement('div');
     playerDiv.className = 'playerDiv player_' + playerId;
@@ -29,39 +31,48 @@ function appendToPlayerContainer(playerDivs) {
 
 let playerDivs = playerSpaceDivs(noOfPlayers);
 appendToPlayerContainer(playerDivs);
-
+let discardedCards = [];
 function distributeCards() {
-    distributeCardsEqually(noOfPlayers);
+    discardCardsFromDeckAtStart();
+    distributeCardsEqually(noOfPlayers, initialCardDistribution);
     playerToStart = document.getElementsByClassName('playerDiv')[0].getAttribute('player');
     applyRestrictedToAllPlayers();
+    initialCardDistribution = myDeck.deck.length / noOfPlayers;
 }
-function distributeCardsEqually(noOfPlayers) {
+function discardCardsFromDeckAtStart() {
+    if (cardsDiscardedAtStart == true) {
+        return;
+    }
     // myDeck.shuffle();
     if(noOfPlayers == 6) {
         //remove all 2s. 
         for(let i=0; i<myDeck.deck.length; i++) {
             if(myDeck.deck[i].value == '2') {
-                myDeck.popByIndex(i);
+                discardedCards.push(myDeck.popByIndex(i));
                 i--;
             }
         }
     }
+    cardsDiscardedAtStart = true;
+    console.log('discarded cards at start');
+}
+function distributeCardsEqually(noOfPlayers, noOfCardsToEachPlayer) {
     myDeck.shuffle();
     let playerDivs = document.getElementsByClassName('playerCards');
     let i=0;
-    while(myDeck.deck.length) {
+    while(i < noOfPlayers * noOfCardsToEachPlayer) {
         let lastCard = myDeck.dealLastCard();
         let cardDiv = makeCardDiv(lastCard);
+        cardDiv.addEventListener('click', placeCardinPot);
         playerDivs[i%noOfPlayers].appendChild(cardDiv);
         i++;
     }
-    for (elem of cards) {
-        elem.addEventListener('click', placeCardinPot);
-    }
+    // for (elem of playableCards) {
+    //     elem.addEventListener('click', placeCardinPot);
+    // }
 }
 
-let potContainer = document.getElementsByClassName('playAreaDiv')[0];
-let cards = document.getElementsByClassName('cardClass');
+
 // for (elem of cards) {
 //     elem.addEventListener('click', placeCardinPot);
 // }
@@ -108,24 +119,47 @@ function potCheck() {
         console.log('Please add cards and wait for all players to play their cards');
         return;
     }
+    let highestCardIndex = decideWinningCardOfHand(cardsInPot);
+    let resultContainer = makeResultDiv(cardsInPot[highestCardIndex]);
+    playerToStart = cardsInPot[highestCardIndex].getAttribute('player');
+    appendAsChild(resultContainer, makeCardDiv(cardObjFromDiv(cardsInPot[highestCardIndex])));
+    calculatePointsAndAddToPlayer(playerToStart);
+    potContainer.textContent = '';
+    let playerDiv = document.getElementsByClassName(playerToStart)[0];
+    removeRestricted(playerDiv);
+}
+function decideWinningCardOfHand(cardsInPot) {
+    //case1: trump not opened. Use base suit 
+    //case2: trump opened. There is a trump card in hand
+    //case3: trump opened. There is no trump card in hand. use base suit.
+    let isTrumpSuitInPot = false;
     let baseSuit = cardsInPot[0].getAttribute('suit');
     let highestCardValue = 0;
     let highestCardIndex = 0;
+    let highestCardIndexOfTrump = -1;
+    let highestCardValueForTrump = 0;
     for (let i=0; i<noOfPlayers; i++) {
-        if (cardsInPot[i].getAttribute('suit') == baseSuit) {
-            let cardPriorityValue = findPriority(cardsInPot[i].getAttribute('cardvalue'));
-            if (cardPriorityValue > highestCardValue) {
+        let currCardSuit = cardsInPot[i].getAttribute('suit');
+        let cardPriorityValue = findPriority(cardsInPot[i].getAttribute('cardvalue'));
+        if (currCardSuit == selectedTrump) {
+            isTrumpSuitInPot = true;
+            if (cardPriorityValue >= highestCardValueForTrump) {
+                highestCardValueForTrump = cardPriorityValue;
+                highestCardIndexOfTrump = i;
+            }
+        }
+        if (currCardSuit == baseSuit) {
+            if (cardPriorityValue >= highestCardValue) {
                 highestCardValue = cardPriorityValue;
                 highestCardIndex = i;
             }
         }
     }
-    let resultContainer = makeResultDiv(cardsInPot[highestCardIndex]);
-    playerToStart = cardsInPot[highestCardIndex].getAttribute('player');
-    appendAsChild(resultContainer, makeCardDiv(cardObjFromDiv(cardsInPot[highestCardIndex])));
-    potContainer.textContent = '';
-    let playerDiv = document.getElementsByClassName(playerToStart)[0];
-    removeRestricted(playerDiv);
+    if (isTrumpSuitInPot) {
+        return highestCardIndexOfTrump;
+    } else {
+        return highestCardIndex;
+    }
 }
 function makeResultDiv(cardDiv) {
     let text = 'Winner of current Hand is ' + cardDiv.getAttribute('player') + ' for playing card:';
@@ -146,12 +180,13 @@ function findPriority(cardValue) {
     return prioritySeq[cardValue];
 }
 function cardToPot(targetCard) {
-    let newCard = cardObjFromDiv(targetCard);
+    // let newCard = cardObjFromDiv(targetCard);
     let player = targetCard.closest('.playerDiv').getAttribute('player');
-    targetCard.remove();
-    let cardDiv = makeCardDiv(newCard);
-    cardDiv.setAttribute('player', player);
-    appendAsChild(potContainer, cardDiv);
+    // targetCard.remove();
+    // let cardDiv = makeCardDiv(newCard);
+    // cardDiv.setAttribute('player', player);
+    targetCard.setAttribute('player', player);
+    appendAsChild(potContainer, targetCard);
 }
 //we can restrict player by adding restricted class to playerDiv. if restricted class, give error.
 //at start when distributing we can restrict all except the one who wins bidding (or player_1)

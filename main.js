@@ -19,6 +19,11 @@ class Card {
         } else {
             this.color = 'black';
         }
+        this.points = '';
+    }
+
+    setPoints(pointsVal) {
+        this.points = pointsVal;
     }
 }
 // let myCard = new Card('Spades', '2');
@@ -93,6 +98,7 @@ function makeCardDiv(cardObj) {
     cardDiv.setAttribute('cardValue', cardObj.value);
     cardDiv.setAttribute('cardName', cardObj.cardName);
     cardDiv.setAttribute('unicode', cardObj.cardIconUnicode);
+    cardDiv.setAttribute('points', cardObj.points)
     cardDiv + ' ' + cardObj.className
     // cardDiv.textContent = '\\' + 'u' +  '{' + unicodevalue + '}';
     // cardDiv.textContent = `${String.fromCodePoint(unicodevalue.split('x')[1].split(';')[0])}`;

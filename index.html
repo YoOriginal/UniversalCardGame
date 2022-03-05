@@ -9,6 +9,11 @@
 </head>
 <body>
     Hey welcome to Universal CardGame!
+    <div class="someThings">
+        <div class="trumpThings">
+            <button onclick="setupTrumpPopup()" class="trumpSetup">trumpSetup</button>
+        </div>
+    </div>
     <button onclick="distributeCards()" class="distributecards">distributecards</button>
     <div class="player-container">
     </div>
@@ -19,15 +24,23 @@
     <div class="card-container">
     </div>
     <button onclick="potCheck()" class="potCheckButton">potCheckButton</button>
-    <p>I will display &spades; &#xF0CE; &#x1F0A1;</p>
+    <!-- <p>I will display &spades; &#xF0CE; &#x1F0A1;</p>
     <span class="myClass">&#127138; &#x1F0A1;</span>
     <p>I will display &spades;</p>
 <p>I will display &#9824;</p>
-<p>I will display &#x2660;</p>
+<p>I will display &#x2660;</p> -->
+    <div class="popup">
+        <div class="trumpSettings">
+            Here you can see/set trump Settings.
+            <div class="trumpCards"></div>
+        </div>
+        <button onclick="togglePopup()" class="closePopup">closePopup</button>
+    </div>
     <script src="cardInfo.js" charset="utf-8"></script>
     <script src="main.js"></script>
     <script src="placeAndPlayCards.js"></script>
     <script src="playerThings.js"></script>
+    <script src="bidding.js"></script>
     <script src="points.js"></script>
 </body>
 </html>
