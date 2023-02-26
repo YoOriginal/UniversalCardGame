@@ -19,14 +19,14 @@ function endTurnBtnClick() {
 endTurnBtnToAllPlayers();
 endTurnBtnClick();
 function endTurnBtnWorking(e) {
-    let potCards = potContainer.getElementsByClassName('cardClass');
+    let potCards = POT_CONTAINER.getElementsByClassName('cardClass');
     if (potCards.length == 0) {
-        console.log('Atleast add one card to the pot for computer to play something');
+        myLog('error','Atleast add one card to the pot for computer to play something');
         return;
     }
     let playerDiv = e.target.closest('.playerDiv');
     if (playerDiv.classList.contains('restricted')) {
-        console.log('Its not your turn. Please wait while current player plays its turn');
+        myLog('error','Its not your turn. Please wait while current player plays its turn');
         return;
     }
     let baseSuit = potCards[0].getAttribute('suit');
@@ -43,7 +43,7 @@ function endTurnBtnWorking(e) {
     }
     if (anybaseSuitCard == false) {
         if (playerCards.length == 0) {
-            console.log('There is no card to play');
+            myLog('error','There is no card to play');
         } else {
             cardToPot(playerCards[0]);
             applyRestrictedToSelf(playerDiv);

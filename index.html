@@ -10,6 +10,9 @@
 <body>
     Hey welcome to Universal CardGame!
     <div class="someThings">
+        <div class="variablesScreen">
+            <button onclick="variableScreen()" class="variableScreenBtn">variablesScreen</button>
+        </div>
         <div class="trumpThings">
             <button onclick="setupTrumpPopup()" class="trumpSetup">trumpSetup</button>
         </div>
@@ -21,20 +24,31 @@
         <div class="playAreaDiv">pot here</div>
         <div class="resultDiv">result here</div>
     </div>
+    <button onclick="potCheck()" class="potCheckButton">potCheckButton</button>
     <div class="card-container">
     </div>
-    <button onclick="potCheck()" class="potCheckButton">potCheckButton</button>
     <!-- <p>I will display &spades; &#xF0CE; &#x1F0A1;</p>
     <span class="myClass">&#127138; &#x1F0A1;</span>
     <p>I will display &spades;</p>
 <p>I will display &#9824;</p>
 <p>I will display &#x2660;</p> -->
+    <div class="consoleLog"></div>
     <div class="popup">
         <div class="trumpSettings">
             Here you can see/set trump Settings.
+            <div class="showTrump">
+                <button onclick="showTrump()" class="showTrumpBtn">show Trump</button>
+            </div>
             <div class="trumpCards"></div>
         </div>
         <button onclick="togglePopup()" class="closePopup">closePopup</button>
+    </div>
+    <div id="variablesPopup">
+        <div class="variableSettings">
+            Here you can change any settings.
+            
+        </div>
+        <button onclick="toggleVariablesPopup()" class="closeVariablesPopup">closeVariablesPopup</button>
     </div>
     <script src="cardInfo.js" charset="utf-8"></script>
     <script src="main.js"></script>

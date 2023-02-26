@@ -7,7 +7,7 @@ console.clear();
 //     }
 // }
 // console.log(Cards);
-console.log('Lets try shuffling');
+myLog('normal','Lets try shuffling');
 class Card {
     constructor(suit, value, cardIconUnicode, cardName) {
         this.suit = suit;
@@ -79,7 +79,7 @@ class Deck {
 let myDeck = new Deck();
 console.log(myDeck);
 // myDeck.createDeck(suits, values);
-console.log(myDeck.createDeck(suits,values, cardIconsUnicodes, cardSeq));
+console.log(myDeck.createDeck(VAROBJ.suits,VAROBJ.values, VAROBJ.cardIconsUnicodes, VAROBJ.cardSeq));
 // console.log(myDeck.dealLastTwo());
 // myDeck.shuffle();
 // console.log(myDeck.dealLastTwo());
@@ -145,4 +145,17 @@ function appendSpecificCards(myDeck, cardsArr) {
 }
 function appendAsChild(container, elem) {
     container.appendChild(elem);
+}
+function myLog(logtype, logmessage) {
+    let consoleDiv = document.querySelector('.consoleLog');
+    let logDiv = document.createElement('div');
+    let logClass = '';
+    switch(logtype) {
+        case 'error': logClass = 'errorLog'; break;
+        default: logClass = 'normalLog'; break;
+    }
+    logDiv.className = logClass;
+    logDiv.textContent = '> ' + logmessage;
+    appendAsChild(consoleDiv, logDiv);
+    consoleDiv.scroll(0, consoleDiv.scrollHeight);
 }

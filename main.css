@@ -2,6 +2,10 @@
     margin-left: 3px;
     font-size: 74px;
 }
+.someThings {
+    display: flex;
+    flex-direction: row;
+}
 .red {
     color: red
 }
@@ -32,4 +36,31 @@
 .trumpSettings {
     display:fixed;
     z-index: 10;
+}
+.bidContainer {
+    display: inline-flex;
+}
+.hidden {
+    display: none;
+}
+.consoleLog {
+    background-color: black;
+    color: white;
+    max-height: 90px;
+    overflow: scroll;
+}
+.normalLog {
+    color: green;
+}
+.errorLog {
+    color: red;
+}
+#variablesPopup {
+    visibility: hidden;
+    position: absolute;
+    top: 10%;
+    z-index: 10;
+    height: 50vh;
+    width: 70vw;
+    background-color: wheat;
 }
