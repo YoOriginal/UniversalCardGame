@@ -1,3 +1,5 @@
+I am new to github. But page is visible here: https://yooriginal.github.io/UniversalCardGame/
+
 ## Welcome to GitHub Pages
 
 You can use the [editor on GitHub](https://github.com/YoOriginal/UniversalCardGame/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
