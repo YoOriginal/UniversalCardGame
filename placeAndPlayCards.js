@@ -1,9 +1,8 @@
-let noOfPlayers = 6;
-let potContainer = document.getElementsByClassName('playAreaDiv')[0];
-let playableCards = document.querySelectorAll('.player-container .cardClass');
-let playerContainerDiv = document.getElementsByClassName('player-container')[0];
-let initialCardDistribution = 4;
-let cardsDiscardedAtStart = false;
+let NUM_OF_PLAYERS = 6;
+let POT_CONTAINER = document.getElementsByClassName('playAreaDiv')[0];
+// let playableCards = document.querySelectorAll('.player-container .cardClass');
+let INITIAL_CARD_DISTRIBUTION = 4;
+let ARE_CARDS_DISCARDED_AT_START = false;
 function makePlayerDiv(playerId) {
     let playerDiv = document.createElement('div');
     playerDiv.className = 'playerDiv player_' + playerId;
@@ -21,30 +20,31 @@ function playerSpaceDivs(noOfPlayers) {
     }
     return playerDivHolder;
 }
-function appendToPlayerContainer(playerDivs) {
-    playerContainerDiv.appendChild(playerDivs);
+function appendToPlayerContainer(playerDivsColl) {
+    let playerContainerDiv = document.getElementsByClassName('player-container')[0];
+    playerContainerDiv.appendChild(playerDivsColl);
     // let playAreaDiv = document.createElement('div');
     // playAreaDiv.className = 'playAreaDiv';
     // playAreaDiv.textContent = 'pot here';
     // playerContainerDiv.appendChild(playAreaDiv);
 }
 
-let playerDivs = playerSpaceDivs(noOfPlayers);
-appendToPlayerContainer(playerDivs);
+let playerDivsColl = playerSpaceDivs(NUM_OF_PLAYERS);
+appendToPlayerContainer(playerDivsColl);
 let discardedCards = [];
 function distributeCards() {
     discardCardsFromDeckAtStart();
-    distributeCardsEqually(noOfPlayers, initialCardDistribution);
+    distributeCardsEqually(NUM_OF_PLAYERS, INITIAL_CARD_DISTRIBUTION);
     playerToStart = document.getElementsByClassName('playerDiv')[0].getAttribute('player');
     applyRestrictedToAllPlayers();
-    initialCardDistribution = myDeck.deck.length / noOfPlayers;
+    INITIAL_CARD_DISTRIBUTION = myDeck.deck.length / NUM_OF_PLAYERS;
 }
 function discardCardsFromDeckAtStart() {
-    if (cardsDiscardedAtStart == true) {
+    if (ARE_CARDS_DISCARDED_AT_START == true) {
         return;
     }
     // myDeck.shuffle();
-    if(noOfPlayers == 6) {
+    if(NUM_OF_PLAYERS == 6) {
         //remove all 2s. 
         for(let i=0; i<myDeck.deck.length; i++) {
             if(myDeck.deck[i].value == '2') {
@@ -53,8 +53,8 @@ function discardCardsFromDeckAtStart() {
             }
         }
     }
-    cardsDiscardedAtStart = true;
-    console.log('discarded cards at start');
+    ARE_CARDS_DISCARDED_AT_START = true;
+    myLog('normal','discarded cards at start');
 }
 function distributeCardsEqually(noOfPlayers, noOfCardsToEachPlayer) {
     myDeck.shuffle();
@@ -79,25 +79,26 @@ function distributeCardsEqually(noOfPlayers, noOfCardsToEachPlayer) {
 function placeCardinPot(e) {
     let targetCard = e.target;
     // let newCard = new Card(targetCard.getAttribute('suit'), targetCard.getAttribute('cardvalue'), targetCard.getAttribute('unicode'), targetCard.getAttribute('cardname'));
-    let noOfCardsInPot = potContainer.getElementsByClassName('cardClass').length;
+    let noOfCardsInPot = POT_CONTAINER.getElementsByClassName('cardClass').length;
     let baseSuit = '';
     if (noOfCardsInPot != 0) {
-        baseSuit = potContainer.getElementsByClassName('cardClass')[0].getAttribute('suit');
+        baseSuit = POT_CONTAINER.getElementsByClassName('cardClass')[0].getAttribute('suit');
     }
     let playerDiv = targetCard.closest('.playerDiv');
     if (playerDiv.classList.contains('restricted')) {
-        console.log('Its not your turn. Please wait while current player plays its turn');
+        myLog('error','Its not your turn. Please wait while current player plays its turn');
     } else {
         if (noOfCardsInPot == 0 || playerCardCheck(targetCard, baseSuit)) {
             cardToPot(targetCard);
             applyRestrictedToSelf(playerDiv);
             // potContainer.appendChild(makeCardDiv(newCard));
         } else {
-            console.log('You have a card of base suit in your hand. Please play that');
+            myLog('error','You have a card of base suit in your hand. Please play that');
         }
     }
 }
 function playerCardCheck(cardDiv, baseSuit) {
+    //returns true if cardDiv has suit of base suit of pot.
     if (baseSuit == '') {
         return false;
     }
@@ -106,17 +107,22 @@ function playerCardCheck(cardDiv, baseSuit) {
         return true;
     }
     let playerCards = cardDiv.closest('.playerDiv').getElementsByClassName('cardClass');
+    if (playerAllCardsCheck(playerCards, baseSuit) == false) {
+        return false;
+    }
+    return true;
+}
+function playerAllCardsCheck(playerCards, baseSuit) {
     for(let i=0; i<playerCards.length; i++) {
         if (playerCards[i].getAttribute('suit') == baseSuit) {
             return false;
         }
     }
-    return true;
 }
 function potCheck() {
-    let cardsInPot = potContainer.getElementsByClassName('cardClass');
-    if (cardsInPot.length == 0 || cardsInPot.length !== noOfPlayers) {
-        console.log('Please add cards and wait for all players to play their cards');
+    let cardsInPot = POT_CONTAINER.getElementsByClassName('cardClass');
+    if (cardsInPot.length == 0 || cardsInPot.length !== NUM_OF_PLAYERS) {
+        myLog('error','Please add cards and wait for all players to play their cards');
         return;
     }
     let highestCardIndex = decideWinningCardOfHand(cardsInPot);
@@ -124,7 +130,7 @@ function potCheck() {
     playerToStart = cardsInPot[highestCardIndex].getAttribute('player');
     appendAsChild(resultContainer, makeCardDiv(cardObjFromDiv(cardsInPot[highestCardIndex])));
     calculatePointsAndAddToPlayer(playerToStart);
-    potContainer.textContent = '';
+    POT_CONTAINER.textContent = '';
     let playerDiv = document.getElementsByClassName(playerToStart)[0];
     removeRestricted(playerDiv);
 }
@@ -138,10 +144,10 @@ function decideWinningCardOfHand(cardsInPot) {
     let highestCardIndex = 0;
     let highestCardIndexOfTrump = -1;
     let highestCardValueForTrump = 0;
-    for (let i=0; i<noOfPlayers; i++) {
+    for (let i=0; i<NUM_OF_PLAYERS; i++) {
         let currCardSuit = cardsInPot[i].getAttribute('suit');
         let cardPriorityValue = findPriority(cardsInPot[i].getAttribute('cardvalue'));
-        if (currCardSuit == selectedTrump) {
+        if (currCardSuit == SELECTED_TRUMP && isTrumpOpened == true) {
             isTrumpSuitInPot = true;
             if (cardPriorityValue >= highestCardValueForTrump) {
                 highestCardValueForTrump = cardPriorityValue;
@@ -177,7 +183,7 @@ function getHigherValue(card1Div, card2Div) {
     }
 }
 function findPriority(cardValue) {
-    return prioritySeq[cardValue];
+    return VAROBJ.prioritySeq[cardValue];
 }
 function cardToPot(targetCard) {
     // let newCard = cardObjFromDiv(targetCard);
@@ -186,7 +192,7 @@ function cardToPot(targetCard) {
     // let cardDiv = makeCardDiv(newCard);
     // cardDiv.setAttribute('player', player);
     targetCard.setAttribute('player', player);
-    appendAsChild(potContainer, targetCard);
+    appendAsChild(POT_CONTAINER, targetCard);
 }
 //we can restrict player by adding restricted class to playerDiv. if restricted class, give error.
 //at start when distributing we can restrict all except the one who wins bidding (or player_1)
